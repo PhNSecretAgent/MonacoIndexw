@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free monaco editor (by alr_dev)</title>
+<style>
+    
+    body {
+        background-color: #1a0e1a;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+
+    
+    #editor-container {
+        width: 80%;
+        height: 80vh;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    
+    .title-bar {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: #121212;
+        color: white;
+    }
+    .title-text {
+        background: linear-gradient(to right, #ff0000, #000000);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 18px;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+</style>
+</head>
+<body>
+
+
+<div class="title-bar">
+    <div class="title-text">Free monaco editor (by alr_dev)</div>
+</div>
+
+
+<div id="editor-container"></div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.min.js"></script>
+<script>
+    
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs' }});
+    require(['vs/editor/editor.main'], function () {
+        
+        
+        monaco.languages.register({ id: 'luau' });
+
+       
+        monaco.languages.setMonarchTokensProvider('luau', {
+            tokenizer: {
+                root: [
+                    [/\b(function|local|end|if|then|else|elseif|for|while|do|repeat|until|return|break|true|_G|script|hookfunction|workspace|hookmetamethod|__index|math|game|GetService|false|nil)\b/, 'keyword'],
+                    [/[a-zA-Z_][\w]*/, 'identifier'],
+                    [/\d+(\.\d+)?/, 'number'],
+                    [/".*?"/, 'string'],
+                    [/--.*$/, 'comment'],
+                ]
+            }
+        });
+
+       
+        const editor = monaco.editor.create(document.getElementById('editor-container'), {
+            value: "-- Start typing your Luau code here...\n",
+            language: 'luau',
+            theme: 'vs-dark',
+            fontSize: 14,
+            automaticLayout: true
+        });
+
+        
+        monaco.languages.registerCompletionItemProvider('luau', {
+            provideCompletionItems: function(model, position) {
+                const suggestions = [
+  
+    { label: 'print', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Outputs text or variables to the console.', insertText: 'print(${1:message})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'warn', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Outputs a warning to the console.', insertText: 'warn(${1:message})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'wait', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Pauses the script for a given time in seconds.', insertText: 'wait(${1:seconds})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'info', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Outputs informational text to the console.', insertText: 'info(${1:message})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'printidentity', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Prints the identity level of the script.', insertText: 'printidentity()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'assert', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Throws an error if the condition is false.', insertText: 'assert(${1:condition}, "${2:errorMessage}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'collectgarbage', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Performs garbage collection.', insertText: 'collectgarbage("${1:step}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'error', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Raises an error.', insertText: 'error("${1:message}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'getfenv', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Gets the environment of a function.', insertText: 'getfenv(${1:func})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'getmetatable', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the metatable of a table.', insertText: 'getmetatable(${1:table})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'setmetatable', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Sets the metatable of a table.', insertText: 'setmetatable(${1:table}, ${2:metatable})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'getrawmetatable', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Gets the raw metatable of a userdata.', insertText: 'getrawmetatable(${1:userdata})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'hookfunction', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Replaces a function with a hooked function.', insertText: 'hookfunction(${1:original}, ${2:hooked})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'hookmetamethod', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Hooks a metatable method.', insertText: 'hookmetamethod(${1:object}, "${2:methodName}", ${3:hooked})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'ipairs', kind: monaco.languages.CompletionItemKind.Function, documentation: 'An iterator for arrays.', insertText: 'ipairs(${1:array})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'loadfile', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Loads a file as a function.', insertText: 'loadfile("${1:filename}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'loadstring', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Loads a string as Lua code.', insertText: 'loadstring("${1:string}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'newproxy', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new userdata with an optional metatable.', insertText: 'newproxy(${1:withMetatable})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'next', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the next index and value in a table.', insertText: 'next(${1:table}, ${2:index})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'pairs', kind: monaco.languages.CompletionItemKind.Function, documentation: 'An iterator for tables.', insertText: 'pairs(${1:table})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'pcall', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Calls a function in protected mode.', insertText: 'pcall(${1:func})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'spawn', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Starts a new thread.', insertText: 'spawn(${1:func})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'rawequal', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Checks for equality without metamethods.', insertText: 'rawequal(${1:v1}, ${2:v2})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'rawget', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Gets a table value without metamethods.', insertText: 'rawget(${1:table}, ${2:index})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'rawset', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Sets a table value without metamethods.', insertText: 'rawset(${1:table}, ${2:index}, ${3:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'select', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns selected arguments from a list.', insertText: 'select(${1:index}, ...)', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'tonumber', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Converts a string to a number.', insertText: 'tonumber(${1:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'tostring', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Converts a value to a string.', insertText: 'tostring(${1:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'type', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the type of a value.', insertText: 'type(${1:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'unpack', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Unpacks a table to individual values.', insertText: 'unpack(${1:table})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'xpcall', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Protected call with error handling.', insertText: 'xpcall(${1:func}, ${2:err})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'delay', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Delays a function execution.', insertText: 'delay(${1:seconds}, ${2:func})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'stats', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns performance statistics for the game.', insertText: 'stats()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'getScriptBytecode', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the bytecode of a script. This function is used to retrieve the raw bytecode of a given script.', insertText: 'getScriptBytecode(${1:script})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'game:GetService', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Gets a Roblox service.', insertText: 'game:GetService("${1:ServiceName}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'workspace', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Represents the workspace in Roblox.', insertText: 'workspace', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'HttpService', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Handles HTTP requests.', insertText: 'HttpService', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'ReplicatedStorage', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Stores replicated objects between server and client.', insertText: 'ReplicatedStorage', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'debug.getinfo', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns information about a function.', insertText: 'debug.getinfo(${1:funcOrID})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'debug.getlocal', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Gets the local variable of a function.', insertText: 'debug.getlocal(${1:func}, ${2:index})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'debug.getmetatable', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Gets the metatable of an object.', insertText: 'debug.getmetatable(${1:object})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'debug.setfenv', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Sets the environment for a function.', insertText: 'debug.setfenv(${1:func}, ${2:env})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'debug.setlocal', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Sets the local variable of a function.', insertText: 'debug.setlocal(${1:func}, ${2:index}, ${3:value})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Players', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'The Players service allows access to player data.', insertText: 'Players', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'TweenService', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Controls the animations of parts and objects.', insertText: 'TweenService', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'UserInputService', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Handles user input events.', insertText: 'UserInputService', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'ContextActionService', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Maps user input to actions.', insertText: 'ContextActionService', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("Part")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new Part.', insertText: 'Instance.new("Part")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("Wedge")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new Wedge part.', insertText: 'Instance.new("Wedge")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("MeshPart")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new MeshPart.', insertText: 'Instance.new("MeshPart")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("Ball")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new Ball part.', insertText: 'Instance.new("Ball")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("Cylinder")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new Cylinder part.', insertText: 'Instance.new("Cylinder")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("CylinderMesh")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new CylinderMesh.', insertText: 'Instance.new("CylinderMesh")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'newcclosure', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new function closure with the specified environment.', insertText: 'newcclosure(${1:function})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'lower', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Converts all characters in a string to lowercase.', insertText: 'string.lower(${1:string})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'checkcaller', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Checks whether the function was called from a valid context.', insertText: 'checkcaller()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'gsub', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Replaces all occurrences of a pattern in a string with a replacement string.', insertText: 'string.gsub(${1:string}, ${2:pattern}, ${3:replacement})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'match', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Searches for the first occurrence of a pattern in a string and returns the matched substring.', insertText: 'string.match(${1:string}, ${2:pattern})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'getnamecallmethod', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the name of the method called by the current object.', insertText: 'getnamecallmethod()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'string.lower', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Converts all characters in a string to lowercase.', insertText: 'string.lower(${1:string})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'string.gsub', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Replaces all occurrences of a pattern in a string with a replacement string.', insertText: 'string.gsub(${1:string}, ${2:pattern}, ${3:replacement})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'cloneref', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a reference clone of the given object, preserving its properties and state.', insertText: 'cloneref(${1:object})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'string.match', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Searches for the first occurrence of a pattern in a string and returns the matched substring.', insertText: 'string.match(${1:string}, ${2:pattern})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("SpawnLocation")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new SpawnLocation object.', insertText: 'Instance.new("SpawnLocation")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("Model")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new Model.', insertText: 'Instance.new("Model")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Request', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Makes a synchronous HTTP request. Deprecated, use RequestAsync.', insertText: 'Request(${1:options})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'RequestAsync', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Makes an asynchronous HTTP request. Use this instead of Request.', insertText: 'RequestAsync(${1:options})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'HttpService:RequestAsync', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Used to make HTTP requests asynchronously.', insertText: 'game:GetService("HttpService"):RequestAsync({ Url = "${1:url}", Method = "${2:GET}", Headers = { ["Content-Type"] = "${3:application/json}" }, Body = "${4:body}" })', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("BillboardGui")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new BillboardGui.', insertText: 'Instance.new("BillboardGui")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("TextLabel")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new TextLabel.', insertText: 'Instance.new("TextLabel")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("Frame")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new Frame UI element.', insertText: 'Instance.new("Frame")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Instance.new("Part", "CustomPart")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new Part with a custom name.', insertText: 'Instance.new("Part", "${1:CustomPart}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':MouseClick', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Triggered when the user clicks a GUI object.', insertText: ':MouseClick(${1:function})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':TouchEnded', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Triggered when the user ends touching a part.', insertText: ':TouchEnded(${1:function})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':Touched', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Triggered when the user touches a part.', insertText: ':Touched(${1:function})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.abs', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the absolute value of a number.', insertText: 'math.abs(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.acos', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the arc cosine of a number.', insertText: 'math.acos(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.asin', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the arc sine of a number.', insertText: 'math.asin(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.atan', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the arc tangent of a number.', insertText: 'math.atan(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.atan2', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the arc tangent of two numbers, representing the y and x coordinates.', insertText: 'math.atan2(${1:y}, ${2:x})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.ceil', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Rounds a number upward to the nearest integer.', insertText: 'math.ceil(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.cos', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the cosine of a number (in radians).', insertText: 'math.cos(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.deg', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Converts an angle from radians to degrees.', insertText: 'math.deg(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.exp', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns e raised to the power of the given number.', insertText: 'math.exp(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.floor', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Rounds a number downward to the nearest integer.', insertText: 'math.floor(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.fmod', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the remainder of dividing two numbers.', insertText: 'math.fmod(${1:number1}, ${2:number2})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.huge', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Represents positive infinity.', insertText: 'math.huge', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.log', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the logarithm of a number with a specified base.', insertText: 'math.log(${1:number}, ${2:base})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.max', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the largest of the given numbers.', insertText: 'math.max(${1:number1}, ${2:number2}, ${3:numberN})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.min', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the smallest of the given numbers.', insertText: 'math.min(${1:number1}, ${2:number2}, ${3:numberN})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.pi', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Represents the value of pi (approximately 3.14159).', insertText: 'math.pi', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.pow', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns a number raised to a specified power.', insertText: 'math.pow(${1:number}, ${2:exponent})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.rad', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Converts an angle from degrees to radians.', insertText: 'math.rad(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.random', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns a random number between two values.', insertText: 'math.random(${1:lower}, ${2:upper})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.randomseed', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Sets the seed for the random number generator.', insertText: 'math.randomseed(${1:seed})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.sin', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the sine of a number (in radians).', insertText: 'math.sin(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.sqrt', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the square root of a number.', insertText: 'math.sqrt(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'math.tan', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Returns the tangent of a number (in radians).', insertText: 'math.tan(${1:number})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':SetPrimaryPartCFrame', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Sets the primary part\'s CFrame in a model.', insertText: ':SetPrimaryPartCFrame(${1:cframe})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'game.Lighting', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Access the Lighting service.', insertText: 'game.Lighting', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'game.Debris', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Manages temporary objects in the game.', insertText: 'game.Debris', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'mousemoveabs', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Moves the mouse cursor to an absolute position on the screen.', insertText: 'mouse.moveabs(${1:x}, ${2:y})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'mousemoverel', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Moves the mouse cursor relative to its current position.', insertText: 'mouse.moverel(${1:x}, ${2:y})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'mousescroll', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Simulates mouse scroll by a given amount.', insertText: 'mouse.scroll(${1:amount})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'mouseclick', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Simulates a mouse click at a specified position.', insertText: 'mouse.click(${1:x}, ${2:y})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Chat', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Handles the chat service for players.', insertText: 'Chat', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'GuiService', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'Handles the GUI system.', insertText: 'GuiService', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'LocalPlayer', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'The player object for the local client.', insertText: 'game.Players.LocalPlayer', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'task.wait', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Pauses the execution of the script for a specified time.', insertText: 'task.wait(${1:seconds})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':Remove', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Removes the object from the game.', insertText: ':Remove()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':BreakJoints', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Breaks the joints of the object.', insertText: ':BreakJoints()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':GetChildren', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Returns a table of an object\'s children.', insertText: ':GetChildren()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':FindFirstChild', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Finds the first child with a given name.', insertText: ':FindFirstChild("${1:childName}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':FireServer', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Fires a remote event to the server.', insertText: ':FireServer(${1:args})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':InvokeServer', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Invokes a remote function on the server.', insertText: ':InvokeServer(${1:args})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':ClearAllChildren', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Clears all children of an object.', insertText: ':ClearAllChildren()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':Clone', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Clones an object.', insertText: ':Clone()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':Destroy', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Destroys an object.', insertText: ':Destroy()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':GetDebugId', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Returns a debug identifier for the object.', insertText: ':GetDebugId()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':GetDescendants', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Gets all descendants of the object.', insertText: ':GetDescendants()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':GetFullName', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Gets the full name of the object.', insertText: ':GetFullName()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':IsA', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Checks if an object is of a certain type.', insertText: ':IsA("${1:type}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':WaitForChild', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Waits for a child to appear in the object.', insertText: ':WaitForChild("${1:childName}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':Connect', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Connects an event to a function.', insertText: ':Connect(${1:function})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':AncestryChanged', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Triggered when the ancestry of the object changes.', insertText: ':AncestryChanged()', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':ChildAdded', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Triggered when a new child is added to the object.', insertText: ':ChildAdded(${1:child})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':DescendantAdded', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Triggered when a descendant is added.', insertText: ':DescendantAdded(${1:descendant})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: ':HttpGet', kind: monaco.languages.CompletionItemKind.Method, documentation: 'Makes a GET request to a URL.', insertText: ':HttpGet("${1:url}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'StarterPlayer', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Contains settings related to the player, such as the starter character or spawn settings.', insertText: 'game:GetService("StarterPlayer")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'StarterGui', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Contains all the GUI elements that are shown to the player.', insertText: 'game:GetService("StarterGui")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'StarterPack', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Contains the objects that are given to the player when they spawn.', insertText: 'game:GetService("StarterPack")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Chat', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Manages chat in the game.', insertText: 'game:GetService("Chat")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'CoreGui', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Contains all GUI elements that are visible on the client, such as the main Roblox UI.', insertText: 'game:GetService("CoreGui")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Lighting', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Controls the game’s lighting and environmental settings.', insertText: 'game:GetService("Lighting")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'NetworkClient', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Provides functions for interacting with the client’s network connection.', insertText: 'game:GetService("NetworkClient")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'PlayerScripts', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Contains scripts that are specifically associated with a player’s client.', insertText: 'game:GetService("PlayerScripts")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'UserInputService', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Handles user input from devices such as keyboard, mouse, and touch.', insertText: 'game:GetService("UserInputService")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'LocalizationService', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Allows you to manage localization in your game, such as translations.', insertText: 'game:GetService("LocalizationService")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'TestService', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Provides access to the TestService (used for testing).', insertText: 'game:GetService("TestService")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'ContentProvider', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Manages content loading and asset caching on the client.', insertText: 'game:GetService("ContentProvider")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'RenderStepped', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Fires every frame, used for updating animations or other frame-based logic.', insertText: 'game:GetService("RunService").RenderStepped', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'RunService', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Provides access to functions related to the game’s run-time execution, such as rendering and heartbeats.', insertText: 'game:GetService("RunService")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'ContextActionService', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Manages context actions and binds them to specific input actions.', insertText: 'game:GetService("ContextActionService")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'TextChatService', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Handles the text chat functionality in the game.', insertText: 'game:GetService("TextChatService")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'AnalyticsService', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Provides data collection and reporting functionality for analytics.', insertText: 'game:GetService("AnalyticsService")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'SoundService', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Controls the playback of sounds in the game.', insertText: 'game:GetService("SoundService")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'GuiService', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Provides methods for controlling the user interface and input on the client.', insertText: 'game:GetService("GuiService")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Draw.new("Line")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new line drawing object.', insertText: 'Draw.new("Line")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Draw.new("Rectangle")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new rectangle drawing object.', insertText: 'Draw.new("Rectangle")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Draw.new("Circle")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new circle drawing object.', insertText: 'Draw.new("Circle")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Draw.new("Ellipse")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new ellipse drawing object.', insertText: 'Draw.new("Ellipse")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Draw.new("Text")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new text drawing object.', insertText: 'Draw.new("Text")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'saveinstance', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Saves an instance to a file or data storage for later use or cloning.', insertText: 'saveinstance(${1:instance})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'Draw.new("Polygon")', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Creates a new polygon drawing object.', insertText: 'Draw.new("Polygon")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: '__index', kind: monaco.languages.CompletionItemKind.Function, documentation: 'The metamethod for indexing a table. Called when accessing a table with a key.', insertText: '__index(${1:table}, ${2:key})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'writefile', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Writes data to a file on the local file system. The file is created if it does not exist.', insertText: 'writefile("${1:name}", "${2:context}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: '_G', kind: monaco.languages.CompletionItemKind.Variable, documentation: 'A global table that holds all global variables and functions in Lua. It is the environment table used for global scope.', insertText: '_G', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+    { label: 'base64encode', kind: monaco.languages.CompletionItemKind.Function, documentation: 'Encodes a given string or binary data to a Base64-encoded string.', insertText: 'base64encode("${1:data}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet }
+];
+
+                return { suggestions: suggestions };
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
